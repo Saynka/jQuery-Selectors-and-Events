@@ -1,24 +1,42 @@
 'use strict';
 
 const animalsArray = [];
+const animalsArray2 = [];
+
 $().ready(() => {
   $.ajax('data/page-1.json', { method: 'GET', dataType: 'JSON' }).then((data) => {
     data.forEach(hornedAnimal => {
-      var newAnimal = new Animal(hornedAnimal);
+      let page = 1;
+      var newAnimal = new Animal(hornedAnimal,page);
       newAnimal.createHTML();
     });
-    dropDown();
 
-  });
+
+  }).then(() => {
+    $.ajax('data/page-2.json', { method: 'GET', dataType: 'JSON' }).then((data) => {
+      data.forEach(hornedAnimal => {
+        let page2 = 2;
+        var newAnimal2 = new Animal(hornedAnimal,page2);
+        newAnimal2.createHTML();
+      });
+    })
+
+  }).then(() => {
+    console.log(animalsArray);
+    dropDown()
+  })
+
 });
-function Animal(object) {
+
+function Animal(object, page) {
   this.title = object.title;
   this.description = object.description;
   this.keyword = object.keyword;
   this.horns = object.horns;
   this.image_url = object.image_url;
+  this.page = page;
   animalsArray.push(this);
-};
+}
 
 
 Animal.prototype.createHTML = function () {
@@ -36,6 +54,7 @@ function dropDown() {
   animalsArray.forEach((Animal) => {
     let nameOfKey = Animal.keyword;
     // ! - does the opposite
+    console.log(nameOfKey, keywords)
     if (!keywords.includes(nameOfKey)) {
       keywords.push(nameOfKey);
     }
@@ -43,18 +62,19 @@ function dropDown() {
   keywords.forEach(keyword => {
     let option = $(`<option value=${keyword}>${keyword}</option>`)
     $('#dropDown').append(option)
-    
-  })
-  console.log(keywords);
-  // .on( events [, selector ] [, data ] )
+
+  });
+
 
   // add event listener to dropdown
-  $('#dropDown').on('change', function () {
-    $('.Animal').remove();
+  $('select').on('change', function () {
+    $('section').hide();
     animalsArray.forEach(Animal => {
       if (Animal.keyword === this.value) {
-        Animal.myTemplate();
+        $(`section[class = ${Animal.keyword}]`).show();
       }
     })
   })
+
+
 }
