@@ -4,27 +4,29 @@ const animalsArray = [];
 const animalsArray2 = [];
 
 $().ready(() => {
-  $.ajax('data/page-1.json', { method: 'GET', dataType: 'JSON' }).then((data) => {
-    data.forEach(hornedAnimal => {
-      let page = 1;
-      var newAnimal = new Animal(hornedAnimal,page);
-      newAnimal.createHTML();
-    });
-
-
-  }).then(() => {
-    $.ajax('data/page-2.json', { method: 'GET', dataType: 'JSON' }).then((data) => {
+  $.ajax('data/page-1.json', { method: 'GET', dataType: 'JSON' })
+    .then((data) => {
       data.forEach(hornedAnimal => {
-        let page2 = 2;
-        var newAnimal2 = new Animal(hornedAnimal,page2);
-        newAnimal2.createHTML();
+        let page = 1;
+        var newAnimal = new Animal(hornedAnimal, page);
+        newAnimal.createHTML();
       });
     })
+    .then(() => {
+      $.ajax('data/page-2.json', { method: 'GET', dataType: 'JSON' })
+        .then((data) => {
+          data.forEach(hornedAnimal => {
+            let page2 = 2;
+            var newAnimal2 = new Animal(hornedAnimal, page2);
+            newAnimal2.createHTML();
 
-  }).then(() => {
-    console.log(animalsArray);
-    dropDown()
-  })
+          });
+          console.log(animalsArray);
+          dropDown()
+          $(".2").hide()
+        })
+
+    })
 
 });
 
@@ -49,11 +51,9 @@ Animal.prototype.createHTML = function () {
 function dropDown() {
 
   let keywords = [];
-  //grab drop down ID
 
   animalsArray.forEach((Animal) => {
     let nameOfKey = Animal.keyword;
-    // ! - does the opposite
     console.log(nameOfKey, keywords)
     if (!keywords.includes(nameOfKey)) {
       keywords.push(nameOfKey);
@@ -78,3 +78,13 @@ function dropDown() {
 
 
 }
+
+$('#1').on('click', () => {
+  $('.2').hide()
+  $('.1').show()
+})
+
+$('#2').on('click', () => {
+  $('.1').hide()
+  $('.2').show()
+})
